@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, CalendarDays, MapPin, Search, Sparkles } from "lucide-react";
+import { Bell, CalendarDays, LogOut, MapPin, Search, Sparkles } from "lucide-react";
 import { BottomNav } from "@/components/dashboard/BottomNav";
 import { PlaceCard } from "@/components/dashboard/PlaceCard";
 import { PopularEventCard } from "@/components/dashboard/PopularEventCard";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 import {
   categories,
   categoryPlaces,
@@ -33,6 +35,8 @@ function useCurrentTime() {
 }
 
 export default function DashboardPage() {
+  const { isLoading, isAuthenticated } = useRequireAuth();
+  const { logout } = useAuth();
   const time = useCurrentTime();
   const [selectedCategory, setSelectedCategory] = useState<(typeof categories)[number] | null>(
     null
@@ -42,6 +46,10 @@ export default function DashboardPage() {
     ? categoryPlaces.filter((place) => place.category === selectedCategory)
     : categoryPlaces;
 
+  if (isLoading || !isAuthenticated) {
+    return <div className="min-h-screen bg-mist" />;
+  }
+
   return (
     <div className="min-h-screen bg-mist pb-28">
       <header className="bg-navy px-6 pb-5 pt-[calc(1.5rem+env(safe-area-inset-top,0px))] text-white">
@@ -50,14 +58,24 @@ export default function DashboardPage() {
             <p className="text-xl font-bold">Viva+</p>
             <p className="text-xs text-white/70">Viva mais da sua cidade.</p>
           </div>
-          <button
-            type="button"
-            aria-label="Notificações"
-            className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white/10"
-          >
-            <Bell className="h-4 w-4" />
-            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-red-500" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              aria-label="Notificações"
+              className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white/10"
+            >
+              <Bell className="h-4 w-4" />
+              <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-red-500" />
+            </button>
+            <button
+              type="button"
+              aria-label="Sair"
+              onClick={logout}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         <div className="mt-4 flex items-center justify-between text-sm">

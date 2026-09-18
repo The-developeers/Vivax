@@ -5,14 +5,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { Lock, User } from "lucide-react";
-import { login } from "@/services/auth";
+import { login as loginRequest } from "@/services/auth";
 import { AuthBackground } from "@/components/AuthBackground";
 import { FormInput } from "@/components/FormInput";
+import { useAuth } from "@/contexts/AuthContext";
 
 const GOOGLE_ICON_URL = process.env.NEXT_PUBLIC_GOOGLE_ICON_URL;
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -25,15 +27,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { user, token } = await login({ email: identifier, password });
-
-      if (rememberMe) {
-        localStorage.setItem("viva_token", token);
-      } else {
-        sessionStorage.setItem("viva_token", token);
-      }
-      localStorage.setItem("viva_user_name", user.name);
-
+      const { user, token } = await loginRequest({ email: identifier, password });
+      login(token, user.name, rememberMe);
       router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível entrar. Tente novamente.");
