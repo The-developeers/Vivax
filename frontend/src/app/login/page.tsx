@@ -1,0 +1,139 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { useState, type FormEvent } from "react";
+import { Lock, User } from "lucide-react";
+import { login } from "@/services/auth";
+import { AuthBackground } from "@/components/AuthBackground";
+import { FormInput } from "@/components/FormInput";
+
+const GOOGLE_ICON_URL = process.env.NEXT_PUBLIC_GOOGLE_ICON_URL;
+
+export default function LoginPage() {
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loggedInName, setLoggedInName] = useState<string | null>(null);
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const { user, token } = await login({ email: identifier, password });
+
+      if (rememberMe) {
+        localStorage.setItem("viva_token", token);
+      } else {
+        sessionStorage.setItem("viva_token", token);
+      }
+
+      setLoggedInName(user.name);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível entrar. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleLogout() {
+    localStorage.removeItem("viva_token");
+    sessionStorage.removeItem("viva_token");
+    setIdentifier("");
+    setPassword("");
+    setLoggedInName(null);
+  }
+
+  return (
+    <AuthBackground>
+      {loggedInName ? (
+        <div className="mt-auto flex w-full flex-col items-center gap-4 pb-8 text-center">
+          <div>
+            <p className="text-lg font-semibold">Bem-vindo(a), {loggedInName}!</p>
+            <p className="mt-1 text-sm text-white/80">Login realizado com sucesso.</p>
+          </div>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="w-full rounded-full bg-offwhite py-3 text-sm font-medium text-charcoal"
+          >
+            Sair
+          </button>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="mt-auto flex w-full flex-col gap-4 pb-8">
+          {error && (
+            <p className="rounded-lg bg-charcoal/40 px-3 py-2 text-center text-xs text-white">
+              {error}
+            </p>
+          )}
+
+          <FormInput
+            icon={User}
+            type="text"
+            required
+            placeholder="E-mail ou Nome de Usuário"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+          />
+
+          <FormInput
+            icon={Lock}
+            type="password"
+            required
+            placeholder="Sua Senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <div className="flex items-center justify-between text-xs text-white/90">
+            <label className="inline-flex cursor-pointer select-none items-center gap-2">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="peer sr-only"
+              />
+              <span className="relative h-5 w-9 rounded-full bg-white/30 transition-colors peer-checked:bg-navy">
+                <span
+                  className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+                    rememberMe ? "translate-x-4" : "translate-x-0"
+                  }`}
+                />
+              </span>
+              Lembrar Acesso
+            </label>
+
+            <button type="button" className="hover:underline">
+              Esqueci a Senha
+            </button>
+          </div>
+
+          <button
+            type="button"
+            className="flex items-center justify-center gap-2 rounded-full bg-offwhite py-3 text-sm font-medium text-charcoal"
+          >
+            {GOOGLE_ICON_URL && <Image src={GOOGLE_ICON_URL} alt="" width={18} height={18} />}
+            Logar com conta Google
+          </button>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="rounded-full bg-navy py-3 text-sm font-semibold text-white transition-opacity disabled:opacity-60"
+          >
+            {loading ? "Entrando..." : "Acessar Viva+"}
+          </button>
+
+          <Link href="/cadastro" className="text-center text-xs text-white/90 hover:underline">
+            Criar Conta
+          </Link>
+        </form>
+      )}
+    </AuthBackground>
+  );
+}
