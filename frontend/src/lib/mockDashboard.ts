@@ -34,20 +34,22 @@ export const featuredEvent: FeaturedEvent = {
   venue: "Arena Chevrolet",
 };
 
+const STORAGE_URL = "https://slayezxjtclzldutarwr.supabase.co/storage/v1/object/public/image";
+
 export const popularEvents: PopularEvent[] = [
   {
     id: "pop-1",
     title: "Matanzinho Lima",
     date: "26 de Agosto",
     badge: "Sal & Verão",
-    imageUrl: null,
+    imageUrl: `${STORAGE_URL}/evento_sal_e_verao.png`,
   },
   {
     id: "pop-2",
-    title: "Festival de Verão",
+    title: "Mistura do Momento",
     date: "31 de Outubro",
     badge: "Edição especial",
-    imageUrl: null,
+    imageUrl: `${STORAGE_URL}/evento_mistura_do_momento.png`,
   },
 ];
 
@@ -59,7 +61,7 @@ export const nearbyPlaces: NearbyPlace[] = [
     distanceKm: 1.2,
     rating: 4.3,
     isOpen: null,
-    imageUrl: null,
+    imageUrl: `${STORAGE_URL}/local_museu_piaui.jpg`,
   },
   {
     id: "place-2",
@@ -68,7 +70,7 @@ export const nearbyPlaces: NearbyPlace[] = [
     distanceKm: 2.4,
     rating: null,
     isOpen: true,
-    imageUrl: null,
+    imageUrl: `${STORAGE_URL}/local_parque_da_cidadania.jpg`,
   },
 ];
 
@@ -80,7 +82,7 @@ export const categoryPlaces: NearbyPlace[] = [
     distanceKm: 10.2,
     rating: 4.5,
     isOpen: true,
-    imageUrl: null,
+    imageUrl: `${STORAGE_URL}/local_bar_do_rufino.webp`,
   },
   {
     id: "place-4",
@@ -89,7 +91,7 @@ export const categoryPlaces: NearbyPlace[] = [
     distanceKm: 1.2,
     rating: 5.0,
     isOpen: true,
-    imageUrl: null,
+    imageUrl: `${STORAGE_URL}/local_kart_rio_poty.jpg`,
   },
 ];
 
