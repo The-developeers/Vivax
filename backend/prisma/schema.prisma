@@ -32,3 +32,26 @@ enum UserType {
     COMMON
     ENTREPRENEUR
 }
+
+model Place {
+    id String @id @default(uuid())
+    name String @unique
+    description String
+    category PlaceCategory
+    latitude Float
+    longitude Float
+    address String?
+    imageUrl String?
+    rating Float?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("places")
+}
+
+enum PlaceCategory {
+    EVENTOS
+    GASTRONOMIA
+    LAZER
+}
