@@ -16,4 +16,6 @@ Centralizar em um único lugar informações sobre **pontos turísticos, eventos
 - 📸 Feed com experiências da comunidade
 - 🏪 Divulgação de pequenos empresários locais
 
+## 💙 Desenvolvimento
 
+Projeto idealizado e desenvolvido pela **Sintaxe**.
