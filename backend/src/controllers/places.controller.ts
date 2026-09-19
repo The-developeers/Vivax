@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { getPlaceById, listPlaces } from "../services/places.service";
 
-const VALID_CATEGORIES = ["EVENTOS", "GASTRONOMIA", "LAZER"] as const;
+const VALID_CATEGORIES = ["EVENTOS", "GASTRONOMIA", "LAZER", "TURISMO"] as const;
 type PlaceCategory = (typeof VALID_CATEGORIES)[number];
 
 function isValidCategory(value: unknown): value is PlaceCategory {
@@ -9,7 +9,7 @@ function isValidCategory(value: unknown): value is PlaceCategory {
 }
 
 export async function index(req: Request, res: Response) {
-  const { category } = req.query;
+  const { category, isFree, today } = req.query;
 
   if (category !== undefined && !isValidCategory(category)) {
     return res.status(400).json({
@@ -17,7 +17,11 @@ export async function index(req: Request, res: Response) {
     });
   }
 
-  const places = await listPlaces(category as PlaceCategory | undefined);
+  const places = await listPlaces({
+    category: category as PlaceCategory | undefined,
+    isFree: isFree === "true",
+    today: today === "true",
+  });
   return res.status(200).json(places);
 }
 
