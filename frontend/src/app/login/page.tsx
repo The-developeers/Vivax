@@ -4,10 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { Lock, User } from "lucide-react";
+import { User } from "lucide-react";
 import { login as loginRequest } from "@/services/auth";
 import { AuthBackground } from "@/components/AuthBackground";
 import { FormInput } from "@/components/FormInput";
+import { PasswordInput } from "@/components/PasswordInput";
 import { useAuth } from "@/contexts/AuthContext";
 
 const GOOGLE_ICON_URL = process.env.NEXT_PUBLIC_GOOGLE_ICON_URL;
@@ -54,9 +55,7 @@ export default function LoginPage() {
             onChange={(e) => setIdentifier(e.target.value)}
           />
 
-          <FormInput
-            icon={Lock}
-            type="password"
+          <PasswordInput
             required
             placeholder="Sua Senha"
             value={password}
