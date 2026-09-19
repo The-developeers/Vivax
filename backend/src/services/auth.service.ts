@@ -85,7 +85,7 @@ export async function loginUser({ email, password }: LoginInput) {
     throw new Error("INVALID_CREDENTIALS");
   }
 
-  const token = jwt.sign({ sub: user.id }, process.env.JWT_SECRET as string, {
+  const token = jwt.sign({ sub: user.id, type: user.type }, process.env.JWT_SECRET as string, {
     expiresIn: "7d",
   });
 

@@ -28,7 +28,7 @@ export default function LoginPage() {
 
     try {
       const { user, token } = await loginRequest({ email: identifier, password });
-      login(token, user.name, rememberMe);
+      login(token, user.name, user.type, rememberMe);
       router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível entrar. Tente novamente.");

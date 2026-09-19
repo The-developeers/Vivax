@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import { authRoutes } from "./routes/auth.routes";
 import { placesRoutes } from "./routes/places.routes";
+import { uploadsRoutes } from "./routes/uploads.routes";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.get("/health", (_req, res) => {
 
 app.use(authRoutes);
 app.use(placesRoutes);
+app.use(uploadsRoutes);
 
 const PORT = process.env.PORT || 3333;
 

@@ -1,3 +1,5 @@
+import { getStoredToken } from "@/lib/authToken";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export type PlaceCategory = "EVENTOS" | "GASTRONOMIA" | "LAZER" | "TURISMO";
@@ -66,4 +68,53 @@ export async function getPlaceById(id: string): Promise<PlaceDetail | null> {
   }
 
   return response.json();
+}
+
+export interface PlaceFormInput {
+  name: string;
+  description: string;
+  category: PlaceCategory;
+  latitude: number;
+  longitude: number;
+  address?: string;
+  imageUrl?: string;
+  isFree?: boolean;
+  eventDate?: string | null;
+  openingHours?: string;
+}
+
+async function authorizedRequest<T>(path: string, method: string, body?: unknown): Promise<T> {
+  const token = getStoredToken();
+  const response = await fetch(`${API_URL}${path}`, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+
+  const data = response.status === 204 ? null : await response.json();
+
+  if (!response.ok) {
+    throw new Error(data?.error ?? "Não foi possível completar a operação.");
+  }
+
+  return data as T;
+}
+
+export function listMyPlaces(): Promise<Place[]> {
+  return authorizedRequest<Place[]>("/places/mine", "GET");
+}
+
+export function createPlace(input: PlaceFormInput): Promise<Place> {
+  return authorizedRequest<Place>("/places", "POST", input);
+}
+
+export function updatePlace(id: string, input: PlaceFormInput): Promise<Place> {
+  return authorizedRequest<Place>(`/places/${id}`, "PUT", input);
+}
+
+export function deletePlace(id: string): Promise<null> {
+  return authorizedRequest<null>(`/places/${id}`, "DELETE");
 }
