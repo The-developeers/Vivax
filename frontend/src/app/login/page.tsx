@@ -2,21 +2,25 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { Lock, User } from "lucide-react";
-import { login } from "@/services/auth";
+import { User } from "lucide-react";
+import { login as loginRequest } from "@/services/auth";
 import { AuthBackground } from "@/components/AuthBackground";
 import { FormInput } from "@/components/FormInput";
+import { PasswordInput } from "@/components/PasswordInput";
+import { useAuth } from "@/contexts/AuthContext";
 
 const GOOGLE_ICON_URL = process.env.NEXT_PUBLIC_GOOGLE_ICON_URL;
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { login } = useAuth();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [loggedInName, setLoggedInName] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -24,48 +28,18 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { user, token } = await login({ email: identifier, password });
-
-      if (rememberMe) {
-        localStorage.setItem("viva_token", token);
-      } else {
-        sessionStorage.setItem("viva_token", token);
-      }
-
-      setLoggedInName(user.name);
+      const { user, token } = await loginRequest({ email: identifier, password });
+      login(token, user.name, user.type, rememberMe);
+      router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível entrar. Tente novamente.");
-    } finally {
       setLoading(false);
     }
   }
 
-  function handleLogout() {
-    localStorage.removeItem("viva_token");
-    sessionStorage.removeItem("viva_token");
-    setIdentifier("");
-    setPassword("");
-    setLoggedInName(null);
-  }
-
   return (
     <AuthBackground>
-      {loggedInName ? (
-        <div className="mt-auto flex w-full flex-col items-center gap-4 pb-8 text-center">
-          <div>
-            <p className="text-lg font-semibold">Bem-vindo(a), {loggedInName}!</p>
-            <p className="mt-1 text-sm text-white/80">Login realizado com sucesso.</p>
-          </div>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="w-full rounded-full bg-offwhite py-3 text-sm font-medium text-charcoal"
-          >
-            Sair
-          </button>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="mt-auto flex w-full flex-col gap-4 pb-8">
+      <form onSubmit={handleSubmit} className="mt-auto flex w-full flex-col gap-4 pb-8">
           {error && (
             <p className="rounded-lg bg-charcoal/40 px-3 py-2 text-center text-xs text-white">
               {error}
@@ -81,9 +55,7 @@ export default function LoginPage() {
             onChange={(e) => setIdentifier(e.target.value)}
           />
 
-          <FormInput
-            icon={Lock}
-            type="password"
+          <PasswordInput
             required
             placeholder="Sua Senha"
             value={password}
@@ -132,8 +104,7 @@ export default function LoginPage() {
           <Link href="/cadastro" className="text-center text-xs text-white/90 hover:underline">
             Criar Conta
           </Link>
-        </form>
-      )}
+      </form>
     </AuthBackground>
   );
 }

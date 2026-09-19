@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
-import { AtSign, Building2, Hash, Lock, Mail, MapPin, Phone, Store } from "lucide-react";
+import { AtSign, Building2, Hash, Mail, MapPin, Phone, Store } from "lucide-react";
 import { register } from "@/services/auth";
 import { AuthBackground } from "@/components/AuthBackground";
 import { FormInput } from "@/components/FormInput";
-
-const PASSWORD_RULE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-const PASSWORD_HINT =
-  "Mínimo de 8 caracteres, com letra maiúscula, minúscula, número e caractere especial.";
+import { PasswordInput } from "@/components/PasswordInput";
+import { PasswordStrengthChecklist } from "@/components/PasswordStrengthChecklist";
+import { isPasswordValid, PASSWORD_HINT } from "@/lib/passwordRules";
 
 export default function CadastroEmpreendedorPage() {
   const [name, setName] = useState("");
@@ -36,7 +35,7 @@ export default function CadastroEmpreendedorPage() {
       return;
     }
 
-    if (!PASSWORD_RULE.test(password)) {
+    if (!isPasswordValid(password)) {
       setError(PASSWORD_HINT);
       return;
     }
@@ -168,19 +167,15 @@ export default function CadastroEmpreendedorPage() {
             </div>
 
             <div>
-              <FormInput
-                icon={Lock}
-                type="password"
+              <PasswordInput
                 required
                 placeholder="Sua Senha Forte"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <p className="mt-1 px-2 text-[11px] leading-tight text-white/70">{PASSWORD_HINT}</p>
+              <PasswordStrengthChecklist password={password} />
             </div>
-            <FormInput
-              icon={Lock}
-              type="password"
+            <PasswordInput
               required
               placeholder="Repita a Mesma Senha"
               value={confirmPassword}
