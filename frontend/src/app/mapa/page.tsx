@@ -1,23 +1,23 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Bell, Search, X } from "lucide-react";
+import { Bell, ChevronRight, Search, X } from "lucide-react";
 import { BottomNav } from "@/components/dashboard/BottomNav";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
-import { listPlaces, type ListPlacesFilters, type Place, type PlaceCategory } from "@/services/places";
+import {
+  listPlaces,
+  PLACE_CATEGORY_LABELS,
+  type ListPlacesFilters,
+  type Place,
+  type PlaceCategory,
+} from "@/services/places";
 
 const PlacesMap = dynamic(
   () => import("@/components/map/PlacesMap").then((mod) => mod.PlacesMap),
   { ssr: false }
 );
-
-const CATEGORY_LABELS: Record<PlaceCategory, string> = {
-  EVENTOS: "Evento",
-  GASTRONOMIA: "Gastronomia",
-  LAZER: "Lazer",
-  TURISMO: "Turismo",
-};
 
 function formatPlaceMeta(place: Place): string {
   const parts: string[] = [];
@@ -28,7 +28,7 @@ function formatPlaceMeta(place: Place): string {
     parts.push(isToday ? "Hoje" : date.toLocaleDateString("pt-BR"));
     parts.push(date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }));
   } else {
-    parts.push(CATEGORY_LABELS[place.category]);
+    parts.push(PLACE_CATEGORY_LABELS[place.category]);
   }
 
   parts.push(place.isFree ? "Grátis" : "Pago");
@@ -170,18 +170,27 @@ export default function MapaPage() {
         )}
 
         {selectedPlace && (
-          <div className="absolute inset-x-6 bottom-24 z-1000 rounded-2xl bg-navy p-4 text-white shadow-xl">
+          <Link
+            href={`/locais/${selectedPlace.id}`}
+            className="absolute inset-x-6 bottom-24 z-1000 flex items-center gap-3 rounded-2xl bg-navy p-4 text-white shadow-xl"
+          >
+            <div className="flex-1">
+              <p className="pr-6 font-semibold">{selectedPlace.name}</p>
+              <p className="mt-1 text-xs text-white/80">{formatPlaceMeta(selectedPlace)}</p>
+            </div>
+            <ChevronRight className="h-5 w-5 shrink-0 text-white/70" />
             <button
               type="button"
               aria-label="Fechar"
-              onClick={() => setSelectedPlace(null)}
+              onClick={(e) => {
+                e.preventDefault();
+                setSelectedPlace(null);
+              }}
               className="absolute right-3 top-3 text-white/70"
             >
               <X className="h-4 w-4" />
             </button>
-            <p className="pr-6 font-semibold">{selectedPlace.name}</p>
-            <p className="mt-1 text-xs text-white/80">{formatPlaceMeta(selectedPlace)}</p>
-          </div>
+          </Link>
         )}
       </div>
 

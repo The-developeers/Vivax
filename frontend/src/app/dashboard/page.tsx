@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Bell, CalendarDays, LogOut, MapPin, Search, Sparkles } from "lucide-react";
 import { BottomNav } from "@/components/dashboard/BottomNav";
@@ -7,17 +8,12 @@ import { PlaceCard } from "@/components/dashboard/PlaceCard";
 import { PopularEventCard } from "@/components/dashboard/PopularEventCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
-import {
-  categories,
-  categoryPlaces,
-  featuredEvent,
-  nearbyPlaces,
-  popularEvents,
-  type NearbyPlace,
-} from "@/lib/mockDashboard";
+import { featuredEvent, popularEvents } from "@/lib/mockDashboard";
+import { listPlaces, PLACE_CATEGORY_LABELS, type Place, type PlaceCategory } from "@/services/places";
 
 // Estático por enquanto — vira geolocalização/API quando o RF02 (mapa) existir.
 const CURRENT_CITY = "Teresina - PI";
+const BROWSE_CATEGORIES: PlaceCategory[] = ["GASTRONOMIA", "LAZER", "TURISMO"];
 
 function useCurrentTime() {
   const [time, setTime] = useState<string | null>(null);
@@ -38,13 +34,22 @@ export default function DashboardPage() {
   const { isLoading, isAuthenticated } = useRequireAuth();
   const { logout } = useAuth();
   const time = useCurrentTime();
-  const [selectedCategory, setSelectedCategory] = useState<(typeof categories)[number] | null>(
-    null
-  );
+  const [places, setPlaces] = useState<Place[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<PlaceCategory | null>(null);
+  const [placesError, setPlacesError] = useState<string | null>(null);
 
-  const visiblePlaces: NearbyPlace[] = selectedCategory
-    ? categoryPlaces.filter((place) => place.category === selectedCategory)
-    : categoryPlaces;
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    listPlaces()
+      .then(setPlaces)
+      .catch(() => setPlacesError("Não foi possível carregar os locais."));
+  }, [isAuthenticated]);
+
+  const nearbyPlaces = places.slice(0, 2);
+  const visiblePlaces = selectedCategory
+    ? places.filter((place) => place.category === selectedCategory)
+    : places;
 
   if (isLoading || !isAuthenticated) {
     return <div className="min-h-screen bg-mist" />;
@@ -128,9 +133,12 @@ export default function DashboardPage() {
             <MapPin className="h-4 w-4 text-navy" />
             Lugares perto de você
           </h2>
+          {placesError && <p className="text-xs text-red-600">{placesError}</p>}
           <div className="-mx-6 flex gap-3 overflow-x-auto px-6 pb-1">
             {nearbyPlaces.map((place) => (
-              <PlaceCard key={place.id} place={place} />
+              <Link key={place.id} href={`/locais/${place.id}`}>
+                <PlaceCard place={place} />
+              </Link>
             ))}
           </div>
         </section>
@@ -138,7 +146,7 @@ export default function DashboardPage() {
         <section className="mt-6">
           <h2 className="mb-2 text-sm font-bold text-charcoal">Descubra por categoria</h2>
           <div className="-mx-6 flex gap-2 overflow-x-auto px-6 pb-1">
-            {categories.map((category) => {
+            {BROWSE_CATEGORIES.map((category) => {
               const isActive = selectedCategory === category;
               return (
                 <button
@@ -149,7 +157,7 @@ export default function DashboardPage() {
                     isActive ? "bg-navy text-white" : "bg-white text-charcoal"
                   }`}
                 >
-                  {category}
+                  {PLACE_CATEGORY_LABELS[category]}
                 </button>
               );
             })}
@@ -157,16 +165,18 @@ export default function DashboardPage() {
 
           <div className="mt-4 grid grid-cols-2 gap-3">
             {visiblePlaces.map((place) => (
-              <PlaceCard key={place.id} place={place} className="w-full" />
+              <Link key={place.id} href={`/locais/${place.id}`}>
+                <PlaceCard place={place} className="w-full" />
+              </Link>
             ))}
           </div>
 
-          <button
-            type="button"
-            className="mt-4 w-full text-center text-sm font-medium text-navy hover:underline"
+          <Link
+            href="/mapa"
+            className="mt-4 block w-full text-center text-sm font-medium text-navy hover:underline"
           >
             Ver mais
-          </button>
+          </Link>
         </section>
       </main>
 

@@ -44,10 +44,13 @@ model Place {
     imageUrl String?
     rating Float?
     isFree Boolean @default(false)
+    openingHours String?
 
     // Preenchido apenas quando o local representa um evento com data marcada
     // (ex: feira, show). Nulo para locais permanentes (museu, parque etc.).
     eventDate DateTime?
+
+    activities PlaceActivity[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -60,4 +63,20 @@ enum PlaceCategory {
     GASTRONOMIA
     LAZER
     TURISMO
+}
+
+// Programação recorrente de um local (ex: aula de ginástica às terças).
+// Diferente de Place.eventDate, que é uma data única de um evento em si.
+model PlaceActivity {
+    id String @id @default(uuid())
+    title String
+    schedule String
+    imageUrl String?
+
+    place Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+    placeId String
+
+    createdAt DateTime @default(now())
+
+    @@map("place_activities")
 }

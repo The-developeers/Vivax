@@ -14,18 +14,9 @@ export interface PopularEvent {
   imageUrl: string | null;
 }
 
-export interface NearbyPlace {
-  id: string;
-  name: string;
-  category: "Eventos" | "Gastronomia" | "Lazer";
-  distanceKm: number;
-  rating: number | null;
-  isOpen: boolean | null;
-  imageUrl: string | null;
-}
-
-// Dados de exemplo — trocar por chamadas reais quando RF02/RF03 (mapa e perfil
-// de local) tiverem endpoints próprios no backend.
+// "Acontecendo hoje" e "Eventos Populares" ainda são conteúdo de exemplo —
+// viram dados reais quando o feed de eventos (RF06) existir. Os locais
+// (Lugares perto de você / Descubra por categoria) já vêm da API (RF02/RF03).
 export const featuredEvent: FeaturedEvent = {
   id: "evt-1",
   title: "Show Aurea Tour",
@@ -52,47 +43,3 @@ export const popularEvents: PopularEvent[] = [
     imageUrl: `${STORAGE_URL}/evento_mistura_do_momento.png`,
   },
 ];
-
-export const nearbyPlaces: NearbyPlace[] = [
-  {
-    id: "place-1",
-    name: "Museu do Piauí",
-    category: "Lazer",
-    distanceKm: 1.2,
-    rating: 4.3,
-    isOpen: null,
-    imageUrl: `${STORAGE_URL}/local_museu_piaui.jpg`,
-  },
-  {
-    id: "place-2",
-    name: "Parque Cidadania",
-    category: "Lazer",
-    distanceKm: 2.4,
-    rating: null,
-    isOpen: true,
-    imageUrl: `${STORAGE_URL}/local_parque_da_cidadania.jpg`,
-  },
-];
-
-export const categoryPlaces: NearbyPlace[] = [
-  {
-    id: "place-3",
-    name: "Bar do Rufino",
-    category: "Gastronomia",
-    distanceKm: 10.2,
-    rating: 4.5,
-    isOpen: true,
-    imageUrl: `${STORAGE_URL}/local_bar_do_rufino.webp`,
-  },
-  {
-    id: "place-4",
-    name: "Kartódromo - Rio Poty",
-    category: "Lazer",
-    distanceKm: 1.2,
-    rating: 5.0,
-    isOpen: true,
-    imageUrl: `${STORAGE_URL}/local_kart_rio_poty.jpg`,
-  },
-];
-
-export const categories = ["Eventos", "Gastronomia", "Lazer"] as const;

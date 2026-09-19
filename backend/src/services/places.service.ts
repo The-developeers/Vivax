@@ -25,5 +25,8 @@ export async function listPlaces({ category, isFree, today }: ListPlacesFilters)
 }
 
 export async function getPlaceById(id: string) {
-  return prisma.place.findUnique({ where: { id } });
+  return prisma.place.findUnique({
+    where: { id },
+    include: { activities: { orderBy: { createdAt: "asc" } } },
+  });
 }
