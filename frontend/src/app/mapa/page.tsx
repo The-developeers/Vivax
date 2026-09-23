@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Bell, ChevronRight, Search, X } from "lucide-react";
 import { BottomNav } from "@/components/dashboard/BottomNav";
-import { useRequireAuth } from "@/hooks/useRequireAuth";
 import {
   listPlaces,
   PLACE_CATEGORY_LABELS,
@@ -37,7 +36,6 @@ function formatPlaceMeta(place: Place): string {
 }
 
 export default function MapaPage() {
-  const { isLoading: authLoading, isAuthenticated } = useRequireAuth();
   const [places, setPlaces] = useState<Place[]>([]);
   const [search, setSearch] = useState("");
   const [onlyToday, setOnlyToday] = useState(false);
@@ -49,8 +47,6 @@ export default function MapaPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
-
     const filters: ListPlacesFilters = {
       today: onlyToday,
       isFree: onlyFree,
@@ -69,7 +65,7 @@ export default function MapaPage() {
     return () => {
       cancelled = true;
     };
-  }, [onlyToday, onlyFree, category, isAuthenticated]);
+  }, [onlyToday, onlyFree, category]);
 
   const visiblePlaces = useMemo(() => {
     if (!search.trim()) return places;
@@ -79,10 +75,6 @@ export default function MapaPage() {
         place.name.toLowerCase().includes(term) || place.description.toLowerCase().includes(term)
     );
   }, [places, search]);
-
-  if (authLoading || !isAuthenticated) {
-    return <div className="min-h-screen bg-mist" />;
-  }
 
   return (
     <div className="flex h-screen flex-col bg-mist">
