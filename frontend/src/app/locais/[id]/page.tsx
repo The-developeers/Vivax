@@ -5,12 +5,10 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Bookmark, Clock, MapPin, ChevronLeft, Star, Ticket } from "lucide-react";
-import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { useSavedPlaces } from "@/hooks/useSavedPlaces";
 import { getPlaceById, PLACE_CATEGORY_LABELS, type PlaceDetail } from "@/services/places";
 
 export default function PlaceDetailPage() {
-  const { isLoading: authLoading, isAuthenticated } = useRequireAuth();
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const { isSaved, toggle } = useSavedPlaces();
@@ -19,14 +17,12 @@ export default function PlaceDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
-
     getPlaceById(params.id)
       .then((data) => setPlace(data))
       .catch(() => setError("Não foi possível carregar este local."));
-  }, [params.id, isAuthenticated]);
+  }, [params.id]);
 
-  if (authLoading || !isAuthenticated || place === undefined) {
+  if (place === undefined) {
     return <div className="min-h-screen bg-mist" />;
   }
 

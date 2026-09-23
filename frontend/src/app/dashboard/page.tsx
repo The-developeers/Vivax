@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Bell, CalendarDays, LogOut, MapPin, Search, Sparkles } from "lucide-react";
+import { Bell, CalendarDays, LogIn, LogOut, MapPin, Search, Sparkles } from "lucide-react";
 import { BottomNav } from "@/components/dashboard/BottomNav";
 import { PlaceCard } from "@/components/dashboard/PlaceCard";
 import { PopularEventCard } from "@/components/dashboard/PopularEventCard";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { featuredEvent, popularEvents } from "@/lib/mockDashboard";
 import { listPlaces, PLACE_CATEGORY_LABELS, type Place, type PlaceCategory } from "@/services/places";
 
@@ -31,27 +30,24 @@ function useCurrentTime() {
 }
 
 export default function DashboardPage() {
-  const { isLoading, isAuthenticated } = useRequireAuth();
-  const { logout } = useAuth();
+  const { token, isLoading, logout } = useAuth();
   const time = useCurrentTime();
   const [places, setPlaces] = useState<Place[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<PlaceCategory | null>(null);
   const [placesError, setPlacesError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
-
     listPlaces()
       .then(setPlaces)
       .catch(() => setPlacesError("Não foi possível carregar os locais."));
-  }, [isAuthenticated]);
+  }, []);
 
   const nearbyPlaces = places.slice(0, 2);
   const visiblePlaces = selectedCategory
     ? places.filter((place) => place.category === selectedCategory)
     : places;
 
-  if (isLoading || !isAuthenticated) {
+  if (isLoading) {
     return <div className="min-h-screen bg-mist" />;
   }
 
@@ -72,14 +68,24 @@ export default function DashboardPage() {
               <Bell className="h-4 w-4" />
               <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-red-500" />
             </button>
-            <button
-              type="button"
-              aria-label="Sair"
-              onClick={logout}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10"
-            >
-              <LogOut className="h-4 w-4" />
-            </button>
+            {token ? (
+              <button
+                type="button"
+                aria-label="Sair"
+                onClick={logout}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                aria-label="Entrar"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10"
+              >
+                <LogIn className="h-4 w-4" />
+              </Link>
+            )}
           </div>
         </div>
 
