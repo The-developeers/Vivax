@@ -2,13 +2,21 @@ import { getStoredToken } from "@/lib/authToken";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export type PlaceCategory = "EVENTOS" | "GASTRONOMIA" | "LAZER" | "TURISMO";
+export type PlaceCategory =
+  | "AR_LIVRE"
+  | "VIDA_NOTURNA"
+  | "CULTURA"
+  | "COMPRAS"
+  | "TRILHAS"
+  | "MUSEUS";
 
 export const PLACE_CATEGORY_LABELS: Record<PlaceCategory, string> = {
-  EVENTOS: "Evento",
-  GASTRONOMIA: "Gastronomia",
-  LAZER: "Lazer",
-  TURISMO: "Turismo",
+  AR_LIVRE: "Ar Livre",
+  VIDA_NOTURNA: "Vida Noturna",
+  CULTURA: "Cultura",
+  COMPRAS: "Compras",
+  TRILHAS: "Trilhas",
+  MUSEUS: "Museus",
 };
 
 export interface PlaceActivity {

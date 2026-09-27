@@ -10,7 +10,7 @@ const places = [
   {
     name: "Museu do Piauí",
     description: "Museu histórico no centro de Teresina, com acervo sobre a formação do estado.",
-    category: "TURISMO" as const,
+    category: "MUSEUS" as const,
     latitude: -5.0919,
     longitude: -42.8034,
     address: "Rua Álvaro Mendes, 2000 - Centro, Teresina - PI, 64000-060",
@@ -25,7 +25,7 @@ const places = [
     name: "Parque Cidadania",
     description:
       "O ambiente perfeito para curtir momentos de lazer com a família e os amigos. Aproveite as quadras, as atrações culturais e os espaços abertos para uma caminhada relaxante ao ar livre.",
-    category: "LAZER" as const,
+    category: "AR_LIVRE" as const,
     latitude: -5.102,
     longitude: -42.785,
     address: "Av. Frei Serafim, 110 - Cabral, Teresina - PI, 64000-590",
@@ -39,7 +39,7 @@ const places = [
   {
     name: "Bar do Rufino",
     description: "Bar tradicional com música ao vivo e petiscos regionais.",
-    category: "GASTRONOMIA" as const,
+    category: "VIDA_NOTURNA" as const,
     latitude: -5.098,
     longitude: -42.81,
     address: "Rua Coelho de Resende, 450 - Centro, Teresina - PI, 64000-140",
@@ -53,7 +53,7 @@ const places = [
   {
     name: "Kartódromo - Rio Poty",
     description: "Pista de kart às margens do Rio Poty, aberta para corridas recreativas.",
-    category: "LAZER" as const,
+    category: "AR_LIVRE" as const,
     latitude: -5.065,
     longitude: -42.775,
     address: "Av. Marechal Castelo Branco, s/n - Poti Velho, Teresina - PI",
@@ -67,7 +67,7 @@ const places = [
   {
     name: "Feira Cultural",
     description: "Feira com artesanato local, comidas típicas e apresentações culturais.",
-    category: "EVENTOS" as const,
+    category: "CULTURA" as const,
     latitude: -5.0895,
     longitude: -42.8015,
     address: "Praça Marechal Deodoro - Centro, Teresina - PI",

@@ -1,11 +1,3 @@
-export interface FeaturedEvent {
-  id: string;
-  title: string;
-  time: string;
-  description: string;
-  venue: string;
-}
-
 export interface PopularEvent {
   id: string;
   title: string;
@@ -14,17 +6,28 @@ export interface PopularEvent {
   imageUrl: string | null;
 }
 
-// "Acontecendo hoje" e "Eventos Populares" ainda são conteúdo de exemplo —
-// viram dados reais quando o feed de eventos (RF06) existir. Os locais
-// (Lugares perto de você / Descubra por categoria) já vêm da API (RF02/RF03).
-export const featuredEvent: FeaturedEvent = {
-  id: "evt-1",
-  title: "Show Aurea Tour",
-  time: "19:00",
-  description: "Música, bebidas e muita diversão para todos os públicos na Arena Chevrolet.",
-  venue: "Arena Chevrolet",
-};
+export interface HiddenTrophy {
+  id: string;
+  name: string;
+  hint: string;
+}
 
+export interface RevisitPlace {
+  id: string;
+  name: string;
+  imageUrl: string;
+}
+
+export interface ExplorationStats {
+  rank: number;
+  city: string;
+  visitedCount: number;
+  totalCount: number;
+}
+
+// Todo esse arquivo é dado de exemplo por enquanto — vira real quando o
+// sistema de pontos/visitas por usuário (gamificação) existir de verdade.
+// "Perto de você" e "Descubra por categoria", no dashboard, já usam a API.
 const STORAGE_URL = "https://slayezxjtclzldutarwr.supabase.co/storage/v1/object/public/image";
 
 export const popularEvents: PopularEvent[] = [
@@ -43,3 +46,34 @@ export const popularEvents: PopularEvent[] = [
     imageUrl: `${STORAGE_URL}/evento_mistura_do_momento.png`,
   },
 ];
+
+export const hiddenTrophy: HiddenTrophy = {
+  id: "trophy-1",
+  name: "Cachoeira do Poti",
+  hint: "Um tesouro escondido esperando por quem topar a aventura.",
+};
+
+export const revisitPlaces: RevisitPlace[] = [
+  {
+    id: "revisit-1",
+    name: "Bar do Rufino",
+    imageUrl: `${STORAGE_URL}/local_bar_do_rufino.webp`,
+  },
+  {
+    id: "revisit-2",
+    name: "Museu do Piauí",
+    imageUrl: `${STORAGE_URL}/local_museu_piaui.jpg`,
+  },
+  {
+    id: "revisit-3",
+    name: "Kartódromo",
+    imageUrl: `${STORAGE_URL}/local_kart_rio_poty.jpg`,
+  },
+];
+
+export const explorationStats: ExplorationStats = {
+  rank: 3,
+  city: "Teresina",
+  visitedCount: 12,
+  totalCount: 50,
+};

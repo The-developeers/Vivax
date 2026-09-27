@@ -9,7 +9,14 @@ import {
   type PlaceInput,
 } from "../services/places.service";
 
-const VALID_CATEGORIES = ["EVENTOS", "GASTRONOMIA", "LAZER", "TURISMO"] as const;
+const VALID_CATEGORIES = [
+  "AR_LIVRE",
+  "VIDA_NOTURNA",
+  "CULTURA",
+  "COMPRAS",
+  "TRILHAS",
+  "MUSEUS",
+] as const;
 type PlaceCategory = (typeof VALID_CATEGORIES)[number];
 
 function isValidCategory(value: unknown): value is PlaceCategory {

@@ -7,10 +7,12 @@ import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import type { Place, PlaceCategory } from "@/services/places";
 
 const CATEGORY_COLORS: Record<PlaceCategory, string> = {
-  EVENTOS: "#F59E0B",
-  GASTRONOMIA: "#EC4899",
-  LAZER: "#3B82F6",
-  TURISMO: "#EF4444",
+  AR_LIVRE: "#22C55E",
+  VIDA_NOTURNA: "#8B5CF6",
+  CULTURA: "#F59E0B",
+  COMPRAS: "#EC4899",
+  TRILHAS: "#3B82F6",
+  MUSEUS: "#EF4444",
 };
 
 function markerIcon(category: PlaceCategory) {

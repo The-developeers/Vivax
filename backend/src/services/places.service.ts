@@ -1,6 +1,6 @@
 import { prisma } from "../lib/prisma";
 
-type PlaceCategory = "EVENTOS" | "GASTRONOMIA" | "LAZER" | "TURISMO";
+type PlaceCategory = "AR_LIVRE" | "VIDA_NOTURNA" | "CULTURA" | "COMPRAS" | "TRILHAS" | "MUSEUS";
 
 interface ListPlacesFilters {
   category?: PlaceCategory;

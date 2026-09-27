@@ -67,10 +67,12 @@ model Place {
 }
 
 enum PlaceCategory {
-    EVENTOS
-    GASTRONOMIA
-    LAZER
-    TURISMO
+    AR_LIVRE
+    VIDA_NOTURNA
+    CULTURA
+    COMPRAS
+    TRILHAS
+    MUSEUS
 }
 
 // Programação recorrente de um local (ex: aula de ginástica às terças).

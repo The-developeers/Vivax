@@ -2,7 +2,8 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { Bell, ChevronRight, Search, X } from "lucide-react";
 import { BottomNav } from "@/components/dashboard/BottomNav";
 import {
@@ -12,6 +13,8 @@ import {
   type Place,
   type PlaceCategory,
 } from "@/services/places";
+
+const CATEGORIES = Object.keys(PLACE_CATEGORY_LABELS) as PlaceCategory[];
 
 const PlacesMap = dynamic(
   () => import("@/components/map/PlacesMap").then((mod) => mod.PlacesMap),
@@ -36,13 +39,23 @@ function formatPlaceMeta(place: Place): string {
 }
 
 export default function MapaPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-mist" />}>
+      <MapaPageContent />
+    </Suspense>
+  );
+}
+
+function MapaPageContent() {
+  const searchParams = useSearchParams();
   const [places, setPlaces] = useState<Place[]>([]);
   const [search, setSearch] = useState("");
   const [onlyToday, setOnlyToday] = useState(false);
   const [onlyFree, setOnlyFree] = useState(false);
-  const [category, setCategory] = useState<Extract<PlaceCategory, "EVENTOS" | "TURISMO"> | null>(
-    null
-  );
+  const [category, setCategory] = useState<PlaceCategory | null>(() => {
+    const param = searchParams.get("category");
+    return (CATEGORIES as string[]).includes(param ?? "") ? (param as PlaceCategory) : null;
+  });
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -129,24 +142,18 @@ export default function MapaPage() {
           >
             Grátis
           </button>
-          <button
-            type="button"
-            onClick={() => setCategory((c) => (c === "EVENTOS" ? null : "EVENTOS"))}
-            className={`shrink-0 rounded-full px-4 py-2 text-xs font-medium ${
-              category === "EVENTOS" ? "bg-navy text-white" : "bg-white text-charcoal"
-            }`}
-          >
-            Evento
-          </button>
-          <button
-            type="button"
-            onClick={() => setCategory((c) => (c === "TURISMO" ? null : "TURISMO"))}
-            className={`shrink-0 rounded-full px-4 py-2 text-xs font-medium ${
-              category === "TURISMO" ? "bg-navy text-white" : "bg-white text-charcoal"
-            }`}
-          >
-            Turismo
-          </button>
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => setCategory((c) => (c === cat ? null : cat))}
+              className={`shrink-0 rounded-full px-4 py-2 text-xs font-medium ${
+                category === cat ? "bg-navy text-white" : "bg-white text-charcoal"
+              }`}
+            >
+              {PLACE_CATEGORY_LABELS[cat]}
+            </button>
+          ))}
         </div>
       </div>
 

@@ -39,7 +39,7 @@ export interface PlaceFormValues {
 const EMPTY_VALUES: PlaceFormValues = {
   name: "",
   description: "",
-  category: "LAZER",
+  category: "AR_LIVRE",
   isEvent: false,
   eventDate: "",
   isFree: false,
