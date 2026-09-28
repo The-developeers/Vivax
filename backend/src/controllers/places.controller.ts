@@ -5,6 +5,7 @@ import {
   getPlaceById,
   listPlaces,
   listPlacesByOwner,
+  listSimilarPlaces,
   updatePlace,
   type PlaceInput,
 } from "../services/places.service";
@@ -24,8 +25,19 @@ function isValidCategory(value: unknown): value is PlaceCategory {
 }
 
 function parsePlaceInput(body: Record<string, unknown>): PlaceInput | { error: string } {
-  const { name, description, category, latitude, longitude, address, imageUrl, isFree, eventDate, openingHours } =
-    body;
+  const {
+    name,
+    description,
+    category,
+    latitude,
+    longitude,
+    address,
+    imageUrl,
+    isFree,
+    eventDate,
+    openingHours,
+    amenities,
+  } = body;
 
   if (typeof name !== "string" || !name.trim()) {
     return { error: "Nome é obrigatório." };
@@ -68,6 +80,9 @@ function parsePlaceInput(body: Record<string, unknown>): PlaceInput | { error: s
     isFree: Boolean(isFree),
     eventDate: parsedEventDate,
     openingHours: typeof openingHours === "string" ? openingHours.trim() : undefined,
+    amenities: Array.isArray(amenities)
+      ? amenities.filter((item): item is string => typeof item === "string" && item.trim() !== "")
+      : undefined,
   };
 }
 
@@ -96,6 +111,17 @@ export async function show(req: Request, res: Response) {
   }
 
   return res.status(200).json(place);
+}
+
+export async function similar(req: Request, res: Response) {
+  const place = await getPlaceById(req.params.id as string);
+
+  if (!place) {
+    return res.status(404).json({ error: "Local não encontrado." });
+  }
+
+  const places = await listSimilarPlaces(place.category as PlaceCategory, place.id);
+  return res.status(200).json(places);
 }
 
 export async function mine(req: Request, res: Response) {

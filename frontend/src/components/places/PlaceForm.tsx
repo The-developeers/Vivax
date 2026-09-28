@@ -32,6 +32,7 @@ export interface PlaceFormValues {
   openingHours: string;
   address: string;
   imageUrl: string;
+  amenities: string;
   latitude: number | null;
   longitude: number | null;
 }
@@ -46,6 +47,7 @@ const EMPTY_VALUES: PlaceFormValues = {
   openingHours: "",
   address: "",
   imageUrl: "",
+  amenities: "",
   latitude: null,
   longitude: null,
 };
@@ -104,6 +106,10 @@ export function PlaceForm({ initialValues, submitLabel, onSubmit }: PlaceFormPro
         isFree: values.isFree,
         eventDate: values.isEvent && values.eventDate ? new Date(values.eventDate).toISOString() : null,
         openingHours: values.openingHours || undefined,
+        amenities: values.amenities
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean),
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível salvar. Tente novamente.");
@@ -202,6 +208,17 @@ export function PlaceForm({ initialValues, submitLabel, onSubmit }: PlaceFormPro
           type="text"
           value={values.address}
           onChange={(e) => update("address", e.target.value)}
+          className="rounded-full bg-offwhite px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy"
+        />
+      </label>
+
+      <label className="flex flex-col gap-1 text-sm text-charcoal">
+        Características (separadas por vírgula)
+        <input
+          type="text"
+          placeholder="Ex: Gratuito, Ideal de manhã, Área verde"
+          value={values.amenities}
+          onChange={(e) => update("amenities", e.target.value)}
           className="rounded-full bg-offwhite px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy"
         />
       </label>

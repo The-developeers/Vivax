@@ -39,6 +39,7 @@ export interface Place {
   isFree: boolean;
   eventDate: string | null;
   openingHours: string | null;
+  amenities: string[];
 }
 
 export interface PlaceDetail extends Place {
@@ -78,6 +79,14 @@ export async function getPlaceById(id: string): Promise<PlaceDetail | null> {
   return response.json();
 }
 
+export async function getSimilarPlaces(id: string): Promise<Place[]> {
+  const response = await fetch(`${API_URL}/places/${id}/similar`);
+
+  if (!response.ok) return [];
+
+  return response.json();
+}
+
 export interface PlaceFormInput {
   name: string;
   description: string;
@@ -89,6 +98,7 @@ export interface PlaceFormInput {
   isFree?: boolean;
   eventDate?: string | null;
   openingHours?: string;
+  amenities?: string[];
 }
 
 async function authorizedRequest<T>(path: string, method: string, body?: unknown): Promise<T> {

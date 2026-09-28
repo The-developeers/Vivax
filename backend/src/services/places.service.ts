@@ -19,6 +19,7 @@ export interface PlaceInput {
   isFree?: boolean;
   eventDate?: Date | null;
   openingHours?: string;
+  amenities?: string[];
 }
 
 export async function listPlaces({ category, isFree, today }: ListPlacesFilters) {
@@ -41,6 +42,14 @@ export async function getPlaceById(id: string) {
   return prisma.place.findUnique({
     where: { id },
     include: { activities: { orderBy: { createdAt: "asc" } } },
+  });
+}
+
+export async function listSimilarPlaces(category: PlaceCategory, excludeId: string) {
+  return prisma.place.findMany({
+    where: { category, id: { not: excludeId } },
+    orderBy: { name: "asc" },
+    take: 6,
   });
 }
 
