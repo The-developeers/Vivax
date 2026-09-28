@@ -20,6 +20,7 @@ const places = [
     isFree: true,
     eventDate: null,
     openingHours: "08:00h — 17:00h",
+    amenities: ["Entrada gratuita", "Ar-condicionado", "Acessível", "Ideal para famílias"],
   },
   {
     name: "Parque Cidadania",
@@ -35,6 +36,7 @@ const places = [
     isFree: true,
     eventDate: null,
     openingHours: "05:00h — 23:00h",
+    amenities: ["Entrada gratuita", "Ideal de manhã", "Área verde", "Pista de caminhada"],
   },
   {
     name: "Bar do Rufino",
@@ -49,6 +51,7 @@ const places = [
     isFree: false,
     eventDate: null,
     openingHours: "18:00h — 00:00h",
+    amenities: ["Música ao vivo", "Ideal à noite", "Bebidas", "Petiscos"],
   },
   {
     name: "Kartódromo - Rio Poty",
@@ -63,6 +66,7 @@ const places = [
     isFree: false,
     eventDate: null,
     openingHours: "14:00h — 22:00h",
+    amenities: ["Pista de kart", "Radical", "Ideal à tarde"],
   },
   {
     name: "Feira Cultural",
@@ -76,6 +80,7 @@ const places = [
     isFree: true,
     eventDate: today17h,
     openingHours: null,
+    amenities: ["Entrada gratuita", "Arte e cultura", "Comidas típicas"],
   },
 ];
 

@@ -49,6 +49,10 @@ model Place {
     isFree Boolean @default(false)
     openingHours String?
 
+    // Características/comodidades do local (ex: "Gratuito", "Ideal de manhã",
+    // "Pista de skate"). Usadas tanto nos chips rápidos quanto em "O que esperar".
+    amenities String[] @default([])
+
     // Preenchido apenas quando o local representa um evento com data marcada
     // (ex: feira, show). Nulo para locais permanentes (museu, parque etc.).
     eventDate DateTime?

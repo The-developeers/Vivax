@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { authenticate, requireEntrepreneur } from "../middlewares/auth.middleware";
-import { create, index, mine, remove, show, update } from "../controllers/places.controller";
+import { create, index, mine, remove, show, similar, update } from "../controllers/places.controller";
 
 const placesRoutes = Router();
 
 // Rotas públicas — qualquer visitante pode explorar o mapa/perfil de locais
 placesRoutes.get("/places", index);
 placesRoutes.get("/places/mine", authenticate, requireEntrepreneur, mine);
+placesRoutes.get("/places/:id/similar", similar);
 placesRoutes.get("/places/:id", show);
 
 // Rotas restritas a empreendedores autenticados

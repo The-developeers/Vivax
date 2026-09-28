@@ -34,6 +34,7 @@ export default function EditarLocalPage() {
           openingHours: place.openingHours ?? "",
           address: place.address ?? "",
           imageUrl: place.imageUrl ?? "",
+          amenities: place.amenities.join(", "),
           latitude: place.latitude,
           longitude: place.longitude,
         });
