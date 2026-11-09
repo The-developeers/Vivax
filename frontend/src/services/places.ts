@@ -136,3 +136,42 @@ export function updatePlace(id: string, input: PlaceFormInput): Promise<Place> {
 export function deletePlace(id: string): Promise<null> {
   return authorizedRequest<null>(`/places/${id}`, "DELETE");
 }
+
+export type TravelMode = "foot" | "bike" | "car";
+
+export interface RouteStep {
+  instruction: string;
+  distanceMeters: number;
+  durationSeconds: number;
+  type: number;
+}
+
+export interface PlaceRoute {
+  mode: TravelMode;
+  distanceMeters: number;
+  durationSeconds: number;
+  ascentMeters: number;
+  finalClimbMeters: number;
+  coordinates: [number, number][];
+  steps: RouteStep[];
+}
+
+export async function getPlaceRoute(
+  id: string,
+  mode: TravelMode,
+  from: { lat: number; lng: number }
+): Promise<PlaceRoute> {
+  const params = new URLSearchParams({
+    mode,
+    lat: String(from.lat),
+    lng: String(from.lng),
+  });
+  const response = await fetch(`${API_URL}/places/${id}/route?${params}`);
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.error ?? "Não foi possível calcular a rota.");
+  }
+
+  return data as PlaceRoute;
+}

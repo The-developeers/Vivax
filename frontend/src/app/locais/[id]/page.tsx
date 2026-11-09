@@ -3,7 +3,8 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import { useGoBack } from "@/hooks/useGoBack";
 import { useEffect, useState } from "react";
 import {
   Bookmark,
@@ -41,15 +42,13 @@ const MiniMap = dynamic(() => import("@/components/map/MiniMap").then((mod) => m
   ssr: false,
 });
 
-const DISCOVERY_XP_REWARD = 30;
-
 export default function PlaceDetailPage() {
   const params = useParams<{ id: string }>();
-  const router = useRouter();
+  const goBack = useGoBack("/mapa");
   const { location: userLocation } = useUserLocation();
   const { isSaved, toggle: toggleSaved } = useSavedPlaces();
   const { isFavorite, toggle: toggleFavorite } = useFavoritePlaces();
-  const { isVisited, toggle: toggleVisited } = useVisitedPlaces();
+  const { isVisited } = useVisitedPlaces();
 
   const [place, setPlace] = useState<PlaceDetail | null | undefined>(undefined);
   const [similarPlaces, setSimilarPlaces] = useState<Place[]>([]);
@@ -91,7 +90,6 @@ export default function PlaceDetailPage() {
   const saved = isSaved(place.id);
   const favorited = isFavorite(place.id);
   const visited = isVisited(place.id);
-  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`;
 
   async function handleShare() {
     if (!place) return;
@@ -116,7 +114,7 @@ export default function PlaceDetailPage() {
           <button
             type="button"
             aria-label="Voltar"
-            onClick={() => router.back()}
+            onClick={goBack}
             className="flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -180,22 +178,23 @@ export default function PlaceDetailPage() {
           )}
         </div>
 
-        <p className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-amber-100 px-2.5 py-1.5 text-xs font-medium text-amber-800">
+        <Link
+          href={`/locais/${place.id}/validar`}
+          className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-amber-100 px-2.5 py-1.5 text-xs font-medium text-amber-800"
+        >
           <Trophy className="h-3.5 w-3.5" />
           {visited
             ? "Você já descobriu esse local!"
-            : `Descubra esse local e ganhe +${DISCOVERY_XP_REWARD} XP`}
-        </p>
+            : `Vá até o local, valide a visita e ganhe +${VISIT_XP_REWARD} XP`}
+        </Link>
 
         <div className="mt-4 flex items-center gap-3">
-          <a
-            href={directionsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={`/locais/${place.id}/rota`}
             className="flex-1 rounded-full bg-navy py-3 text-center text-sm font-semibold text-white"
           >
             Como chegar
-          </a>
+          </Link>
           <button
             type="button"
             aria-label={favorited ? "Remover dos favoritos" : "Favoritar"}
@@ -331,16 +330,20 @@ export default function PlaceDetailPage() {
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-1000 flex items-center gap-3 bg-mist p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
-        <button
-          type="button"
-          onClick={() => toggleVisited(place.id)}
-          className={`flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold ${
-            visited ? "bg-green-600 text-white" : "bg-navy text-white"
-          }`}
-        >
-          <CheckCircle2 className="h-4 w-4" />
-          {visited ? "Local visitado" : "Marcar como visitado"}
-        </button>
+        {visited ? (
+          <span className="flex flex-1 items-center justify-center gap-2 rounded-full bg-green-600 py-3 text-sm font-semibold text-white">
+            <CheckCircle2 className="h-4 w-4" />
+            Local visitado
+          </span>
+        ) : (
+          <Link
+            href={`/locais/${place.id}/validar`}
+            className="flex flex-1 items-center justify-center gap-2 rounded-full bg-navy py-3 text-sm font-semibold text-white"
+          >
+            <CheckCircle2 className="h-4 w-4" />
+            Cheguei! Validar visita
+          </Link>
+        )}
         {!visited && (
           <span className="shrink-0 rounded-full bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-800">
             +{VISIT_XP_REWARD} XP

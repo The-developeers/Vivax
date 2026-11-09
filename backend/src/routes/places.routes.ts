@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticate, requireEntrepreneur } from "../middlewares/auth.middleware";
-import { create, index, mine, remove, show, similar, update } from "../controllers/places.controller";
+import { create, index, mine, remove, route, show, similar, update } from "../controllers/places.controller";
 
 const placesRoutes = Router();
 
@@ -8,6 +8,7 @@ const placesRoutes = Router();
 placesRoutes.get("/places", index);
 placesRoutes.get("/places/mine", authenticate, requireEntrepreneur, mine);
 placesRoutes.get("/places/:id/similar", similar);
+placesRoutes.get("/places/:id/route", route);
 placesRoutes.get("/places/:id", show);
 
 // Rotas restritas a empreendedores autenticados
