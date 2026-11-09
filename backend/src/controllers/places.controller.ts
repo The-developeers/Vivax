@@ -9,6 +9,7 @@ import {
   updatePlace,
   type PlaceInput,
 } from "../services/places.service";
+import { getRoute, RouteError, type TravelMode } from "../services/routes.service";
 
 const VALID_CATEGORIES = [
   "AR_LIVRE",
@@ -122,6 +123,38 @@ export async function similar(req: Request, res: Response) {
 
   const places = await listSimilarPlaces(place.category as PlaceCategory, place.id);
   return res.status(200).json(places);
+}
+
+const TRAVEL_MODES: readonly TravelMode[] = ["foot", "bike", "car"];
+
+export async function route(req: Request, res: Response) {
+  const mode = req.query.mode;
+  const lat = Number(req.query.lat);
+  const lng = Number(req.query.lng);
+
+  if (typeof mode !== "string" || !(TRAVEL_MODES as readonly string[]).includes(mode)) {
+    return res.status(400).json({ error: `Modo inválido. Use um de: ${TRAVEL_MODES.join(", ")}.` });
+  }
+  if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180) {
+    return res.status(400).json({ error: "Localização de origem inválida." });
+  }
+
+  const place = await getPlaceById(req.params.id as string);
+  if (!place) {
+    return res.status(404).json({ error: "Local não encontrado." });
+  }
+
+  try {
+    const result = await getRoute(mode as TravelMode, [lat, lng], [place.latitude, place.longitude]);
+    return res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof RouteError) {
+      const status = error.code === "NO_ROUTE" ? 422 : error.code === "NOT_CONFIGURED" ? 503 : 502;
+      return res.status(status).json({ error: error.message });
+    }
+    console.error(error);
+    return res.status(500).json({ error: "Erro ao calcular a rota." });
+  }
 }
 
 export async function mine(req: Request, res: Response) {

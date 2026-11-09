@@ -20,9 +20,9 @@ export function useLocalIdSet(storageKey: string) {
     }
   }, [storageKey]);
 
-  function toggle(id: string) {
+  function update(compute: (prev: string[]) => string[]) {
     setIds((prev) => {
-      const next = prev.includes(id) ? prev.filter((existing) => existing !== id) : [...prev, id];
+      const next = compute(prev);
       try {
         localStorage.setItem(storageKey, JSON.stringify(next));
       } catch {
@@ -32,9 +32,20 @@ export function useLocalIdSet(storageKey: string) {
     });
   }
 
+  function toggle(id: string) {
+    update((prev) =>
+      prev.includes(id) ? prev.filter((existing) => existing !== id) : [...prev, id]
+    );
+  }
+
+  // Inclui sem nunca remover — pra ações que não devem ser desfeitas por engano.
+  function add(id: string) {
+    update((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  }
+
   function has(id: string) {
     return ids.includes(id);
   }
 
-  return { ids, toggle, has };
+  return { ids, toggle, add, has };
 }
